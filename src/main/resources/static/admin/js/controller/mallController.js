@@ -1,5 +1,5 @@
 mall.controller('mallController', function ($rootScope, $scope, $http, $state) {
-    $rootScope.img_host = "http://wxmall.image.alimmdn.com/";
+    $rootScope.img_host = "http://chunyi.image.alimmdn.com/";
     $scope.user = {};
     $http.get('/admin/user').then(function (response) {
         $scope.user = response.data.data;

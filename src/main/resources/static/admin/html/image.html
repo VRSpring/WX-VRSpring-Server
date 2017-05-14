@@ -1,0 +1,42 @@
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            图片管理
+            <small>Version 2.0</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a ui-sref="dashboard"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">图片管理</li>
+        </ol>
+    </section>
+
+    <div class="row">
+        <div class="pull-right">
+            <p>
+                <a href="upload" type="button" class="btn bg-green btn-flat margin">
+                    <i class="fa fa-add">添加图片</i>
+                </a>
+            </p>
+        </div>
+    </div>
+
+    <div class="box">
+        <div datatableimage options="options" page-changed="pageChanged(page)" item-delete="itemDelete(id)" img_host="{{img_host}}">
+
+        </div>
+    </div>
+
+    <div class="modal modal-success" ng-class="{true: 'show', false: 'hidden'}[operateSuccess]">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body text-center" style="font-size: 30px;">
+                    <i class="fa  fa-check"></i>
+                    <p>操作成功</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /.content-wrapper -->

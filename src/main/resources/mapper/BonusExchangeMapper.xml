@@ -1,0 +1,164 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="BonusExchangeMapper">
+
+    <resultMap id="BonusExchangeResult" type="BonusExchange" autoMapping="true">
+        <id column="id" property="id" javaType="Integer" jdbcType="INTEGER"/>
+        <result property="tid" column="tid" javaType="Integer" jdbcType="INTEGER"/>
+        <result property="code" column="code" javaType="String" jdbcType="VARCHAR"/>
+        <result property="number" column="number" javaType="Integer" jdbcType="INTEGER"/>
+        <result property="created_at" column="created_at" javaType="Date" jdbcType="TIMESTAMP"/>
+        <result property="deleted_at" column="deleted_at" javaType="Date" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <select id="getById" resultMap="BonusExchangeResult">
+        SELECT
+        id,
+        tid,
+        code,
+        number,
+        created_at,
+        deleted_at
+        FROM bonus_exchange
+        WHERE id=#{id}
+    </select>
+
+    <select id="getByCode" resultMap="BonusExchangeResult">
+        SELECT
+        id,
+        tid,
+        code,
+        number,
+        created_at,
+        deleted_at
+        FROM bonus_exchange
+        WHERE code=#{code}
+    </select>
+
+    <insert id="insert">
+        <selectKey resultType="Integer" keyProperty="id" keyColumn="id" order="AFTER">
+            SELECT LAST_INSERT_ID() as id
+        </selectKey>
+        INSERT INTO bonus_exchange (
+        <trim prefix="" prefixOverrides="," suffixOverrides="," suffix="">
+            <if test="tid!=null">
+                ,tid
+            </if>
+            <if test="code!=null">
+                ,code
+            </if>
+            <if test="number!=null">
+                ,number
+            </if>
+            ,created_at
+        </trim>
+        ) VALUES (
+        <trim prefix="" prefixOverrides="," suffixOverrides="," suffix="">
+            <if test="tid!=null">
+                ,#{tid}
+            </if>
+            <if test="code!=null">
+                ,#{code}
+            </if>
+            <if test="number!=null">
+                ,#{number}
+            </if>
+            ,now()
+        </trim>
+        )
+    </insert>
+
+    <update id="update" parameterType="BonusExchange">
+        UPDATE bonus_exchange SET
+        <trim prefixOverrides="," prefix="" suffix="" suffixOverrides=",">
+
+            <if test="tid!=null">
+                ,tid=#{tid}
+            </if>
+            <if test="code!=null">
+                ,code=#{code}
+            </if>
+            <if test="number!=null">
+                ,number=#{number}
+            </if>
+            <if test="!(number>0)">
+                ,updated_at=now()
+            </if>
+        </trim>
+        where id=#{id}
+    </update>
+
+    <update id="invalid">
+        UPDATE bonus_exchange SET
+        <trim prefixOverrides="," prefix="" suffix="" suffixOverrides=",">
+            <if test="number!=null">
+                ,number=0
+            </if>
+        </trim>
+        ,deleted_at=now()
+        where id=#{id}
+    </update>
+
+
+    <insert id="saveOrUpdate" parameterType="BonusExchange">
+        <selectKey keyProperty="id" resultType="Integer" keyColumn="id" order="BEFORE">
+            select sum(id) AS id from bonus_exchange where id = #{id} limit 0,1
+        </selectKey>
+        <if test="id>0">
+            UPDATE bonus_exchange SET
+            <trim prefixOverrides="," prefix="" suffix="" suffixOverrides=",">
+                <if test="tid!=null">
+                    ,#{tid}
+                </if>
+                <if test="code!=null">
+                    ,#{code}
+                </if>
+                <if test="number!=null">
+                    ,#{number}
+                </if>
+            </trim>
+            ,updated_at=now()
+            where id=#{id}
+        </if>
+        <if test="id==null">
+            INSERT INTO bonus_exchange (
+            <trim prefix="" prefixOverrides="," suffixOverrides="," suffix="">
+                <if test="tid!=null">
+                    ,tid
+                </if>
+                <if test="code!=null">
+                    ,code
+                </if>
+                <if test="number!=null">
+                    ,number
+                </if>
+                ,created_at
+            </trim>
+            ) VALUES (
+            <trim prefix="" prefixOverrides="," suffixOverrides="," suffix="">
+                <if test="tid!=null">
+                    ,#{tid}
+                </if>
+                <if test="code!=null">
+                    ,#{code}
+                </if>
+                <if test="number!=null">
+                    ,#{number}
+                </if>
+                ,now()
+            </trim>
+            )
+        </if>
+    </insert>
+
+
+    <delete id="delete">
+        DELETE FROM bonus_exchange WHERE id=#{id}
+    </delete>
+
+    <update id="softDelete">
+        UPDATE bonus_exchange set deleted_at=now() WHERE id=#{id}
+    </update>
+
+</mapper>

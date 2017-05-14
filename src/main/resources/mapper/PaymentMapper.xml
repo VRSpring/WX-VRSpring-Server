@@ -1,0 +1,138 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PaymentMapper">
+
+    <resultMap id="PaymentResult" type="Payment" autoMapping="true">
+        <id column="id" property="id" javaType="Integer" jdbcType="INTEGER"/>
+        <result property="is_enabled" column="is_enabled" javaType="Integer" jdbcType="INTEGER"/>
+        <result property="imgid" column="imgid" javaType="Integer" jdbcType="INTEGER"/>
+        <result property="code" column="code" javaType="String" jdbcType="VARCHAR"/>
+        <result property="name" column="name" javaType="String" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="getAll" resultMap="PaymentResult">
+        SELECT
+        id,
+        code,
+        name,
+        is_enabled,
+        imgid,
+        app_key,
+        app_secret
+        FROM payment
+    </select>
+
+    <select id="getEnabled" resultMap="PaymentResult">
+        SELECT
+        id,
+        code,
+        name,
+        is_enabled,
+        imgid,
+        app_key,
+        app_secret
+        FROM payment
+        WHERE is_enabled = 1
+    </select>
+
+    <select id="getById" resultMap="PaymentResult">
+        SELECT
+        id,
+        code,
+        name,
+        is_enabled,
+        imgid,
+        app_key,
+        app_secret
+        FROM payment
+        WHERE id=#{id}
+    </select>
+
+    <insert id="insert" parameterType="Payment">
+        <selectKey resultType="Integer" keyProperty="id" keyColumn="id" order="AFTER">
+            SELECT LAST_INSERT_ID() as id
+        </selectKey>
+        INSERT INTO payment (
+        <trim prefix="" prefixOverrides="," suffixOverrides="," suffix="">
+            <if test="code!=null">
+                ,code
+            </if>
+            <if test="name!=null">
+                ,name
+            </if>
+            <if test="is_enabled!=null">
+                ,is_enabled
+            </if>
+            <if test="imgid!=null">
+                ,imgid
+            </if>
+            <if test="app_key!=null">
+                ,app_key
+            </if>
+            <if test="app_secret!=null">
+                ,app_secret
+            </if>
+            ,created_at
+            ,updated_at
+        </trim>
+        ) VALUES (
+        <trim suffix="" suffixOverrides="," prefix="" prefixOverrides=",">
+            <if test="code!=null">
+                ,#{code}
+            </if>
+            <if test="name!=null">
+                ,#{name}
+            </if>
+            <if test="is_enabled!=null">
+                ,#{is_enabled}
+            </if>
+            <if test="imgid!=null">
+                ,#{imgid}
+            </if>
+            <if test="app_key!=null">
+                ,#{app_key}
+            </if>
+            <if test="app_secret!=null">
+                ,#{app_secret}
+            </if>
+            ,now()
+            ,now()
+        </trim>
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE payment set
+        <trim prefixOverrides="," prefix="" suffix="" suffixOverrides=",">
+            <if test="code!=null">
+                ,code=#{code}
+            </if>
+            <if test="name!=null">
+                ,name=#{name}
+            </if>
+            <if test="sid!=null">
+                ,sid=#{sid}
+            </if>
+            <if test="is_enabled!=null">
+                ,is_enabled=#{is_enabled}
+            </if>
+            <if test="imgid!=null">
+                ,imgid=#{imgid}
+            </if>
+            <if test="app_key!=null">
+                ,app_key=#{app_key}
+            </if>
+            <if test="app_secret!=null">
+                ,app_secret=#{app_secret}
+            </if>
+        </trim>
+        ,updated_at=now()
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM payment WHERE id=#{id}
+    </delete>
+
+</mapper>

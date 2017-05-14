@@ -1,0 +1,576 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="UserMapper">
+    <resultMap id="UserResult" type="User" autoMapping="true">
+        <id column="id" property="id" javaType="Integer" jdbcType="INTEGER"/>
+        <result column="enabled" property="enabled" javaType="Integer" jdbcType="INTEGER"/>
+        <result column="verified" property="verified" javaType="Integer" jdbcType="INTEGER"/>
+        <result column="created_at" property="created_at" javaType="Date" jdbcType="TIMESTAMP"/>
+        <result column="updated_at" property="updated_at" javaType="Date" jdbcType="TIMESTAMP"/>
+        <result column="deleted_at" property="deleted_at" javaType="Date" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <select id="getById" resultMap="UserResult">
+        SELECT
+        id,
+        name,
+        sessionId,
+        mobile,
+        email,
+        wx,
+        enabled,
+        verified,
+        description,
+        openId,
+        nickName,
+        gender,
+        city,
+        province,
+        country,
+        avatarUrl,
+        unionId,
+        password,
+        remember_token,
+        created_at,
+        updated_at,
+        deleted_at
+        FROM users
+        WHERE id = #{id}
+    </select>
+
+    <select id="getByNameOrSessionId" resultMap="UserResult">
+        SELECT
+        id,
+        name,
+        sessionId,
+        mobile,
+        email,
+        wx,
+        enabled,
+        verified,
+        description,
+        openId,
+        nickName,
+        gender,
+        city,
+        province,
+        country,
+        avatarUrl,
+        unionId,
+        password,
+        remember_token,
+        created_at,
+        updated_at,
+        deleted_at
+        FROM users
+        WHERE name = #{token}
+        OR sessionId = #{token}
+    </select>
+
+    <select id="getByOpenId" resultMap="UserResult">
+        SELECT
+        id,
+        name,
+        sessionId,
+        mobile,
+        email,
+        wx,
+        enabled,
+        verified,
+        description,
+        openId,
+        nickName,
+        gender,
+        city,
+        province,
+        country,
+        avatarUrl,
+        unionId,
+        password,
+        remember_token,
+        created_at,
+        updated_at,
+        deleted_at
+        FROM users
+        WHERE openId = #{openId}
+    </select>
+
+    <select id="getBySessionId" resultMap="UserResult">
+        SELECT
+        id,
+        name,
+        sessionId,
+        mobile,
+        email,
+        wx,
+        enabled,
+        verified,
+        description,
+        openId,
+        nickName,
+        gender,
+        city,
+        province,
+        country,
+        avatarUrl,
+        unionId,
+        password,
+        remember_token,
+        created_at,
+        updated_at,
+        deleted_at
+        FROM users
+        WHERE sessionId = #{sessionId}
+        AND <![CDATA[ expired > now()
+        ]]>
+    </select>
+
+    <select id="getByName" resultMap="UserResult">
+        SELECT
+        id,
+        name,
+        sessionId,
+        mobile,
+        email,
+        wx,
+        enabled,
+        verified,
+        description,
+        openId,
+        nickName,
+        gender,
+        city,
+        province,
+        country,
+        avatarUrl,
+        unionId,
+        password,
+        remember_token,
+        created_at,
+        updated_at,
+        deleted_at
+        FROM users
+        WHERE name = #{name}
+    </select>
+
+    <select id="checkMobile" resultType="Integer">
+        SELECT count(1)
+        FROM users
+        WHERE mobile = #{mobile}
+    </select>
+
+    <select id="checkUsername" resultType="Integer">
+        SELECT count(1)
+        FROM users
+        WHERE name = #{username}
+    </select>
+
+    <select id="getByWx" resultMap="UserResult">
+        SELECT
+        id,
+        name,
+        sessionId,
+        mobile,
+        email,
+        wx,
+        enabled,
+        verified,
+        description,
+        openId,
+        nickName,
+        gender,
+        city,
+        province,
+        country,
+        avatarUrl,
+        unionId,
+        password,
+        remember_token,
+        created_at,
+        updated_at,
+        deleted_at
+        FROM users
+        WHERE wx = #{wx}
+    </select>
+
+    <select id="count" resultType="Integer">
+        SELECT count(*) FROM users
+        WHERE verified = 1
+        <if test="start!=null">
+            AND <![CDATA[ created_at >=#{start javaType=Date } ]]>
+            AND <![CDATA[ created_at <= #{end javaType=Date }]]>
+        </if>
+    </select>
+
+    <select id="getByEmail" resultMap="UserResult">
+        SELECT
+        id,
+        name,
+        sessionId,
+        mobile,
+        email,
+        wx,
+        enabled,
+        verified,
+        description,
+        openId,
+        nickName,
+        gender,
+        city,
+        province,
+        country,
+        avatarUrl,
+        unionId,
+        password,
+        remember_token,
+        created_at,
+        updated_at,
+        deleted_at
+        FROM users
+        WHERE email = #{email}
+    </select>
+
+    <select id="getAll" resultMap="UserResult">
+        SELECT
+        id,
+        name,
+        sessionId,
+        mobile,
+        email,
+        wx,
+        enabled,
+        verified,
+        description,
+        openId,
+        nickName,
+        gender,
+        city,
+        province,
+        country,
+        avatarUrl,
+        unionId,
+        password,
+        remember_token,
+        created_at,
+        updated_at,
+        deleted_at
+        FROM users
+    </select>
+
+    <select id="check" resultType="Integer">
+        SELECT count(1)
+        FROM users
+        WHERE name = #{username}
+        AND password=#{password}
+    </select>
+
+    <insert id="insert" parameterType="User">
+        <selectKey resultType="Integer" keyProperty="id" keyColumn="id" order="AFTER">
+            SELECT LAST_INSERT_ID() as id
+        </selectKey>
+        INSERT INTO users(
+        <trim prefixOverrides="," prefix="" suffix="" suffixOverrides=",">
+            <if test="name!=null">
+                ,name
+            </if>
+            <if test="mobile!=null">
+                ,mobile
+            </if>
+            <if test="email!=null">
+                ,email
+            </if>
+            <if test="wx!=null">
+                ,wx
+            </if>
+            <if test="enabled!=null">
+                ,enabled
+            </if>
+            <if test="verified!=null">
+                ,verified
+            </if>
+            <if test="description!=null">
+                ,description
+            </if>
+            <if test="password!=null">
+                ,password
+            </if>
+            <if test="remember_token!=null">
+                ,remember_token
+            </if>
+            ,created_at
+            ,updated_at
+        </trim>
+        ) VALUES (
+        <trim prefixOverrides="," prefix="" suffix="" suffixOverrides=",">
+            <if test="name!=null">
+                ,#{name}
+            </if>
+            <if test="mobile!=null">
+                ,#{mobile}
+            </if>
+            <if test="email!=null">
+                ,#{email}
+            </if>
+            <if test="wx!=null">
+                ,#{wx}
+            </if>
+            <if test="enabled!=null">
+                ,#{enabled}
+            </if>
+            <if test="verified!=null">
+                ,#{verified}
+            </if>
+            <if test="description!=null">
+                ,#{description}
+            </if>
+            <if test="password!=null">
+                ,#{password}
+            </if>
+            <if test="remember_token!=null">
+                ,#{remember_token}
+            </if>
+            ,now()
+            ,now()
+        </trim>
+        )
+    </insert>
+
+    <update id="update" parameterType="User">
+        UPDATE users set
+        <trim prefixOverrides="," prefix="" suffixOverrides="," suffix="">
+            <if test="name!=null">
+                ,name=#{name}
+            </if>
+            <if test="mobile!=null">
+                ,mobile=#{mobile}
+            </if>
+            <if test="email!=null">
+                ,email=#{email}
+            </if>
+            <if test="wx!=null">
+                ,wx=#{wx}
+            </if>
+            <if test="enabled!=null">
+                ,enabled=#{enabled}
+            </if>
+            <if test="verified!=null">
+                ,verified=#{verified}
+            </if>
+            <if test="description!=null">
+                ,description=#{description}
+            </if>
+            <if test="password!=null">
+                ,password=#{password}
+            </if>
+            <if test="remember_token!=null">
+                ,remember_token=#{remember_token}
+            </if>
+            ,updated_at=now()
+        </trim>
+        WHERE id=#{id}
+    </update>
+
+
+    <insert id="insertAll" parameterType="User">
+        <selectKey resultType="Integer" keyProperty="id" keyColumn="id" order="AFTER">
+            SELECT LAST_INSERT_ID() as id
+        </selectKey>
+        INSERT INTO users(
+        <trim prefixOverrides="," prefix="" suffix="" suffixOverrides=",">
+            <if test="name!=null">
+                ,name
+            </if>
+            <if test="sessionId!=null">
+                ,sessionId
+            </if>
+            <if test="mobile!=null">
+                ,mobile
+            </if>
+            <if test="email!=null">
+                ,email
+            </if>
+            <if test="wx!=null">
+                ,wx
+            </if>
+            <if test="enabled!=null">
+                ,enabled
+            </if>
+            <if test="verified!=null">
+                ,verified
+            </if>
+            <if test="description!=null">
+                ,description
+            </if>
+            <if test="openId!=null">
+                ,openId
+            </if>
+            <if test="nickName!=null">
+                ,nickName
+            </if>
+            <if test="gender!=null">
+                ,gender
+            </if>
+            <if test="city!=null">
+                ,city
+            </if>
+            <if test="province!=null">
+                ,province
+            </if>
+            <if test="country!=null">
+                ,country
+            </if>
+            <if test="avatarUrl!=null">
+                ,avatarUrl
+            </if>
+            <if test="unionId!=null">
+                ,unionId
+            </if>
+            <if test="password!=null">
+                ,password
+            </if>
+            <if test="remember_token!=null">
+                ,remember_token
+            </if>
+            <if test="expired!=null">
+                ,expired
+            </if>
+            ,created_at
+            ,updated_at
+        </trim>
+        ) VALUES (
+        <trim prefixOverrides="," prefix="" suffix="" suffixOverrides=",">
+            <if test="name!=null">
+                ,#{name}
+            </if>
+            <if test="sessionId!=null">
+                ,#{sessionId}
+            </if>
+            <if test="mobile!=null">
+                ,#{mobile}
+            </if>
+            <if test="email!=null">
+                ,#{email}
+            </if>
+            <if test="wx!=null">
+                ,#{wx}
+            </if>
+            <if test="enabled!=null">
+                ,#{enabled}
+            </if>
+            <if test="verified!=null">
+                ,#{verified}
+            </if>
+            <if test="description!=null">
+                ,#{description}
+            </if>
+            <if test="openId!=null">
+                ,#{openId}
+            </if>
+            <if test="nickName!=null">
+                ,#{nickName}
+            </if>
+            <if test="gender!=null">
+                ,#{gender}
+            </if>
+            <if test="city!=null">
+                ,#{city}
+            </if>
+            <if test="province!=null">
+                ,#{province}
+            </if>
+            <if test="country!=null">
+                ,#{country}
+            </if>
+            <if test="avatarUrl!=null">
+                ,#{avatarUrl}
+            </if>
+            <if test="unionId!=null">
+                ,#{unionId}
+            </if>
+            <if test="password!=null">
+                ,#{password}
+            </if>
+            <if test="remember_token!=null">
+                ,#{remember_token}
+            </if>
+            <if test="expired!=null">
+                ,#{expired}
+            </if>
+            ,now()
+            ,now()
+        </trim>
+        )
+    </insert>
+
+    <update id="updateAll" parameterType="User">
+        UPDATE users set
+        <trim prefixOverrides="," prefix="" suffixOverrides="," suffix="">
+            <if test="name!=null">
+                ,name=#{name}
+            </if>
+            <if test="sessionId!=null">
+                ,sessionId=#{sessionId}
+            </if>
+            <if test="mobile!=null">
+                ,mobile=#{mobile}
+            </if>
+            <if test="email!=null">
+                ,email=#{email}
+            </if>
+            <if test="wx!=null">
+                ,wx=#{wx}
+            </if>
+            <if test="enabled!=null">
+                ,enabled=#{enabled}
+            </if>
+            <if test="verified!=null">
+                ,verified=#{verified}
+            </if>
+            <if test="description!=null">
+                ,description=#{description}
+            </if>
+            <if test="openId!=null">
+                ,openId=#{openId}
+            </if>
+            <if test="nickName!=null">
+                ,nickName=#{nickName}
+            </if>
+            <if test="gender!=null">
+                ,gender=#{gender}
+            </if>
+            <if test="city!=null">
+                ,city=#{city}
+            </if>
+            <if test="province!=null">
+                ,province=#{province}
+            </if>
+            <if test="country!=null">
+                ,country=#{country}
+            </if>
+            <if test="avatarUrl!=null">
+                ,avatarUrl=#{avatarUrl}
+            </if>
+            <if test="unionId!=null">
+                ,unionId=#{unionId}
+            </if>
+            <if test="password!=null">
+                ,password=#{password}
+            </if>
+            <if test="remember_token!=null">
+                ,remember_token=#{remember_token}
+            </if>
+            <if test="expired!=null">
+                ,expired=#{expired}
+            </if>
+            ,updated_at=now()
+        </trim>
+        WHERE id=#{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM users WHERE id=#{id}
+    </delete>
+
+    <update id="softDelete">
+        UPDATE users set deleted_at=now() WHERE id=#{id}
+    </update>
+</mapper>
